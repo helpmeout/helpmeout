@@ -49,10 +49,16 @@ describe "Formatter" do
 
   describe "delete_failed_test" do
     it "should do nothing if no test exists with that example description" do
-      @db.should_receive(:execute).once.with("SELECT id FROM failed_tests WHERE example_description = ?", :the_description).and_return([])
-      @formatter.send(:delete_failed_test, :the_description)
+      @formatter.should_receive(:matching_failed_test).with(:example).and_return(nil)
+      @formatter.send(:delete_failed_test, :example)
     end
-      
+
+    it "should delete the failed test and its files" do
+      @formatter.should_receive(:matching_failed_test).with(:example).and_return({:id => "37"})
+      @db.should_receive(:execute).with("DELETE FROM failed_tests WHERE id = ?", "37")
+      @db.should_receive(:execute).with("DELETE FROM failed_test_files WHERE failed_test_id = ?", "37")
+      @formatter.send(:delete_failed_test, :example)
+    end
   end
 
   describe "db" do
@@ -97,7 +103,7 @@ describe "Formatter" do
     end
 
     it "should call delete_failed_test" do
-      @formatter.should_receive(:delete_failed_test).with(:description)
+      @formatter.should_receive(:delete_failed_test).with(@example)
       @formatter.example_failed(@example)
     end
 
@@ -115,7 +121,48 @@ describe "Formatter" do
      @formatter.should_receive(:create_failed_test_file).with("file2", 37) 
      @formatter.example_failed(@example)
     end
+  end
   
+  describe "rows_as_hashes" do
+    before(:each) do
+      @db_rows = [ 
+        ["id", "name", "zip_code"],
+        ["12", "palim", "12321"],
+        ["23", "schmuh", "323232"]
+      ]
+    end
+    it "should return the rows for the query as hashes" do
+      @db.should_receive("execute2").with("SELECT * FROM something").and_return(@db_rows)
+      @formatter.send(:rows_as_hashes, "SELECT * FROM something").should ==
+        [
+          { :id => "12", :name => "palim", :zip_code => "12321"}.with_indifferent_access,
+          { :id => "23", :name => "schmuh", :zip_code => "323232"}.with_indifferent_access
+      ]
+    end
+
+    it "should return an empty array if there are no results" do
+      @db.should_receive("execute2").with("SELECT * FROM something").and_return([])
+      @formatter.send(:rows_as_hashes, "SELECT * FROM something").should == []
+    end
+  end
+
+  describe "example_passed" do
+    before(:each) do
+      @service = stub("Service").as_null_object
+      @formatter.stub(:service => @service)
+    end
+
+    it "should do nothing if the example did not fail before" do
+      @formatter.should_receive(:matching_failed_test).with(:example).and_return(nil)
+      @formatter.should_not_receive(:service)
+      @formatter.example_passed(:example)
+    end
+
+    it "should call service.add_fix if the example failed before" do
+      @formatter.should_receive(:matching_failed_test).with(:example).and_return(:failed_test)
+      @service.should_receive(:add_fix).with(:failed_test)
+      @formatter.example_passed(:example)
+    end
   end
 
 end

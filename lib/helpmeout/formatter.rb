@@ -8,15 +8,12 @@ module Helpmeout
       set_up_database
     end
 
-    def example_started(example)
-    end
-
     def example_failed(example)
       exception = example.execution_result[:exception_encountered]
       backtrace = exception.backtrace.join("\n")
 
       db.transaction 
-      delete_failed_test(example.full_description)
+      delete_failed_test(example)
       create_failed_test exception.message, backtrace, example.full_description
       inserted_test_id = db.last_insert_row_id
 
@@ -28,6 +25,9 @@ module Helpmeout
     end
 
     def example_passed(example)
+      if failed_test = matching_failed_test(example)
+        service.add_fix(failed_test)
+      end
     end
 
 
@@ -46,11 +46,11 @@ module Helpmeout
       backtrace.collect{ |line| line.starts_with?(Rails.root) ? line.split(':')[0] : nil}.compact.uniq
     end
 
-    def delete_failed_test(description)
-      failed_test_id = db.execute("SELECT id FROM failed_tests WHERE example_description = ?", description).first
-      if failed_test_id
-        db.execute "DELETE FROM failed_tests WHERE id = ?", failed_test_id
-        db.execute "DELETE FROM failed_test_files WHERE failed_test_id = ?", failed_test_id
+    def delete_failed_test(example)
+      failed_test = matching_failed_test(example)
+      if failed_test
+        db.execute "DELETE FROM failed_tests WHERE id = ?", failed_test[:id]
+        db.execute "DELETE FROM failed_test_files WHERE failed_test_id = ?", failed_test[:id]
       end
     end
 
@@ -63,6 +63,27 @@ module Helpmeout
     def create_failed_test(exception_message, backtrace, example_description)
       db.execute("INSERT INTO failed_tests VALUES(?, ?, ?, ?)",
                  nil, exception_message, backtrace, example_description)
+    end
+
+    def rows_as_hashes(*query)
+      result = []
+      column_names = nil
+      db.execute2(*query).each do |row|
+        if column_names.nil?
+          column_names = row.collect{|key| key.to_sym}
+        else
+          result << Hash[*column_names.zip(row).flatten].with_indifferent_access
+        end
+      end
+      result
+    end
+
+    def matching_failed_test(example)
+      rows_as_hashes("SELECT * FROM failed_tests WHERE example_description = ?", example).first
+    end
+
+    def service
+
     end
 
   end
