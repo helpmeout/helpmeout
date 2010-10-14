@@ -13,8 +13,8 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "helpmeout"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Collect and suggest bugfixes}
+  gem.description = %Q{Yet to be determined}
   gem.email = "manuel.kallenbach@gmail.com"
   gem.homepage = "http://github.com/manukall/helpmeout"
   gem.authors = ["Manuel Kallenbachj"]
@@ -22,10 +22,12 @@ Jeweler::Tasks.new do |gem|
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  spec.add_runtime_dependency 'jabber4r', '> 0.1'
   #  spec.add_development_dependency 'rspec', '> 1.2.3'
-  gem.add_development_dependency "rspec", "~> 2.0.0"
   gem.add_development_dependency "bundler", "~> 1.0.0"
   gem.add_development_dependency "jeweler", "~> 1.5.0.pre5"
   gem.add_development_dependency "rcov", ">= 0"
+  gem.add_dependency "rails"
+  gem.add_dependency "sqlite3-ruby"
+  gem.add_dependency "rspec", "~> 2.0.0"
 end
 Jeweler::RubygemsDotOrgTasks.new
 
