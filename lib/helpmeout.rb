@@ -1,9 +1,10 @@
 require 'dm-core'
+require 'dm-migrations'
 DataMapper::Logger.new($stdout, :debug)
 DataMapper.setup(:default, 'sqlite://helpmeout.db')
 
-require 'lib/models/failed_test'
-require 'lib/models/failed_test_file'
+require 'helpmeout/failed_test'
+require 'helpmeout/failed_test_file'
 
 DataMapper.finalize
 DataMapper.auto_upgrade!

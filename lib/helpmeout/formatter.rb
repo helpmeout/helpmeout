@@ -1,27 +1,21 @@
 require 'rspec/core/formatters/base_text_formatter'
-require 'sqlite3'
+require 'helpmeout/failed_test'
+require 'helpmeout/failed_test_file'
 
 module Helpmeout
   class Formatter < RSpec::Core::Formatters::BaseTextFormatter
     
-    def start(example_count)
-      set_up_database
-    end
-
     def example_failed(example)
       exception = example.execution_result[:exception_encountered]
       backtrace = exception.backtrace.join("\n")
 
-      db.transaction 
       delete_failed_test(example)
-      create_failed_test exception.message, backtrace, example.full_description
-      inserted_test_id = db.last_insert_row_id
+      inserted_test = create_failed_test exception.message, backtrace, example.full_description
 
       project_files = get_project_files(exception.backtrace)
       project_files.each do |file_path|
-        create_failed_test_file(file_path, inserted_test_id)
+        create_failed_test_file(file_path, inserted_test.id)
       end
-      db.commit
     end
 
     def example_passed(example)
@@ -33,53 +27,32 @@ module Helpmeout
 
     private
 
-    def db
-      @db ||= SQLite3::Database.new( "helpmeout.db" )
-    end
-
-    def set_up_database
-      db.execute("create table if not exists failed_tests(id INTEGER PRIMARY KEY, exception_message VARCHAR, backtrace VARCHAR, example_description VARCHAR)")
-      db.execute("create table if not exists failed_test_files(id INTEGER PRIMARY KEY, path VARCHAR, content VARCHAR, failed_test_id INTEGER)")
-    end
-
-    def get_project_files(backtrace)
-      backtrace.collect{ |line| line.starts_with?(Rails.root) ? line.split(':')[0] : nil}.compact.uniq
-    end
-
     def delete_failed_test(example)
       failed_test = matching_failed_test(example)
       if failed_test
-        db.execute "DELETE FROM failed_tests WHERE id = ?", failed_test[:id]
-        db.execute "DELETE FROM failed_test_files WHERE failed_test_id = ?", failed_test[:id]
+        failed_test.destroy
       end
     end
 
     def create_failed_test_file(path, failed_test_id)
       file_content = File.read(path)
-      db.execute("INSERT INTO failed_test_files VALUES(?, ?, ?, ?)",
-                 nil, path, file_content, failed_test_id )
+      FailedTestFile.create( :path => path, :content => file_content,
+                            :failed_test_id => failed_test_id)
     end
 
     def create_failed_test(exception_message, backtrace, example_description)
-      db.execute("INSERT INTO failed_tests VALUES(?, ?, ?, ?)",
-                 nil, exception_message, backtrace, example_description)
-    end
-
-    def rows_as_hashes(*query)
-      result = []
-      column_names = nil
-      db.execute2(*query).each do |row|
-        if column_names.nil?
-          column_names = row.collect{|key| key.to_sym}
-        else
-          result << Hash[*column_names.zip(row).flatten].with_indifferent_access
-        end
-      end
-      result
+      FailedTest.create(:exception_message => exception_message,
+                        :backtrace => backtrace,
+                        :example_description => example_description
+                       )
     end
 
     def matching_failed_test(example)
-      rows_as_hashes("SELECT * FROM failed_tests WHERE example_description = ?", example).first
+      FailedTest.first(:example_description => example.full_description)
+    end
+
+    def get_project_files(backtrace)
+      backtrace.collect {|line| line.starts_with?(Rails.root) ? line.split(':')[0] : nil }.uniq.compact
     end
 
     def service

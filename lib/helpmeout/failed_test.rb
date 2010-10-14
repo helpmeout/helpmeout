@@ -1,4 +1,4 @@
-module HelpmeOut
+module Helpmeout
   class FailedTest
     include DataMapper::Resource
 
@@ -7,6 +7,6 @@ module HelpmeOut
     property :backtrace, String
     property :example_description, String
 
-    has_n :failed_test_files
+    has n, :failed_test_files, :dependent => :destroy
   end
 end

@@ -1,4 +1,4 @@
-module HelpmeOut
+module Helpmeout
   class FailedTestFile
     include DataMapper::Resource
 

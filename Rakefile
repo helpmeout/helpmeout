@@ -30,6 +30,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_dependency "dm-core"
   gem.add_dependency "dm-sqlite-adapter"
   gem.add_dependency "dm-migrations"
+  gem.add_dependency "dm-constraints"
 end
 Jeweler::RubygemsDotOrgTasks.new
 
