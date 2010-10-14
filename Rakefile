@@ -26,8 +26,11 @@ Jeweler::Tasks.new do |gem|
   gem.add_development_dependency "jeweler", "~> 1.5.0.pre5"
   gem.add_development_dependency "rcov", ">= 0"
   gem.add_dependency "rails"
-  gem.add_dependency "sqlite3-ruby"
   gem.add_dependency "rspec", "~> 2.0.0"
+  gem.add_dependency "dm-core"
+  gem.add_dependency "dm-sqlite-adapter"
+  gem.add_dependency "dm-migrations"
+  gem.add_dependency "dm-constraints"
 end
 Jeweler::RubygemsDotOrgTasks.new
 

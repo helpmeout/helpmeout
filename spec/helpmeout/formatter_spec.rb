@@ -6,28 +6,6 @@ describe "Formatter" do
   before(:each) do
     @output = StringIO.new
     @formatter = Helpmeout::Formatter.new(@output)
-    @db = stub("database").as_null_object
-    @formatter.stub(:db => @db)
-  end
-
-  describe "start" do
-    it "should initialize the database setup" do
-      @formatter.should_receive(:set_up_database)
-      @formatter.start(12)
-    end
-  end
-
-  describe "set_up_database" do
-
-    it "should create the failed_tests table" do
-      @db.should_receive(:execute).with("create table if not exists failed_tests(id INTEGER PRIMARY KEY, exception_message VARCHAR, backtrace VARCHAR, example_description VARCHAR)")
-      @formatter.send(:set_up_database)
-    end
-
-    it "should create the failed_test_files table" do
-      @db.should_receive(:execute).with("create table if not exists failed_test_files(id INTEGER PRIMARY KEY, path VARCHAR, content VARCHAR, failed_test_id INTEGER)")
-      @formatter.send(:set_up_database)
-    end
   end
 
   describe "get_project_files" do
@@ -54,19 +32,10 @@ describe "Formatter" do
     end
 
     it "should delete the failed test and its files" do
-      @formatter.should_receive(:matching_failed_test).with(:example).and_return({:id => "37"})
-      @db.should_receive(:execute).with("DELETE FROM failed_tests WHERE id = ?", "37")
-      @db.should_receive(:execute).with("DELETE FROM failed_test_files WHERE failed_test_id = ?", "37")
+      failed_test = stub("Failed Test")
+      @formatter.should_receive(:matching_failed_test).with(:example).and_return(failed_test)
+      failed_test.should_receive(:destroy)
       @formatter.send(:delete_failed_test, :example)
-    end
-  end
-
-  describe "db" do
-    it "should create and cache the database connection" do
-      @formatter.unstub(:db)
-      SQLite3::Database.should_receive(:new).with("helpmeout.db").once.and_return(:db_connection)
-      @formatter.send(:db).should == :db_connection
-      @formatter.send(:db).should == :db_connection #execute again to see if the connection is cached
     end
   end
 
@@ -74,16 +43,19 @@ describe "Formatter" do
     it "should create a failed test file row" do
       File.should_receive(:read).with("/home/user/project/file.rb").
         and_return(:content_of_the_file)
-      @db.should_receive(:execute).with("INSERT INTO failed_test_files VALUES(?, ?, ?, ?)",
-                                        nil, "/home/user/project/file.rb", :content_of_the_file, 37)
+      Helpmeout::FailedTestFile.should_receive(:create).with({
+        :path => "/home/user/project/file.rb",
+        :content => :content_of_the_file, :failed_test_id => 37
+      })
       @formatter.send(:create_failed_test_file, "/home/user/project/file.rb", 37)
     end
   end
 
   describe "create_failed_test" do
     it "should create a failed test" do
-      @db.should_receive(:execute).with("INSERT INTO failed_tests VALUES(?, ?, ?, ?)",
-                                        nil, :message, :backtrace, :description)
+      Helpmeout::FailedTest.should_receive(:create).with(:exception_message => :message,
+                                              :backtrace => :backtrace,
+                                              :example_description => :description)
       @formatter.send(:create_failed_test, :message, :backtrace, :description)
     end
   end
@@ -114,37 +86,16 @@ describe "Formatter" do
     end
 
     it "should create failed_test_files for the project files" do
-      @db.stub(:last_insert_row_id => 37)
+      failed_test_stub = stub(:id => 37)
+      @formatter.stub(:create_failed_test).and_return(failed_test_stub)
       @formatter.should_receive(:get_project_files).
         with(["file1:12", "file2:23"]).and_return(["file1", "file2"])
-     @formatter.should_receive(:create_failed_test_file).with("file1", 37) 
-     @formatter.should_receive(:create_failed_test_file).with("file2", 37) 
-     @formatter.example_failed(@example)
+      @formatter.should_receive(:create_failed_test_file).with("file1", 37) 
+      @formatter.should_receive(:create_failed_test_file).with("file2", 37) 
+      @formatter.example_failed(@example)
     end
   end
   
-  describe "rows_as_hashes" do
-    before(:each) do
-      @db_rows = [ 
-        ["id", "name", "zip_code"],
-        ["12", "palim", "12321"],
-        ["23", "schmuh", "323232"]
-      ]
-    end
-    it "should return the rows for the query as hashes" do
-      @db.should_receive("execute2").with("SELECT * FROM something").and_return(@db_rows)
-      @formatter.send(:rows_as_hashes, "SELECT * FROM something").should ==
-        [
-          { :id => "12", :name => "palim", :zip_code => "12321"}.with_indifferent_access,
-          { :id => "23", :name => "schmuh", :zip_code => "323232"}.with_indifferent_access
-      ]
-    end
-
-    it "should return an empty array if there are no results" do
-      @db.should_receive("execute2").with("SELECT * FROM something").and_return([])
-      @formatter.send(:rows_as_hashes, "SELECT * FROM something").should == []
-    end
-  end
 
   describe "example_passed" do
     before(:each) do
