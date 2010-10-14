@@ -15,3 +15,6 @@ end
 gem "rspec", "~> 2.0.0"
 gem "sqlite3-ruby"
 gem "rails"
+gem "dm-core"
+gem "dm-sqlite-adapter"
+gem "dm-migrations"
