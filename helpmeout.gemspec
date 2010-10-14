@@ -25,8 +25,12 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "helpmeout.gemspec",
     "lib/helpmeout.rb",
+    "lib/helpmeout/failed_test.rb",
+    "lib/helpmeout/failed_test_file.rb",
     "lib/helpmeout/formatter.rb",
+    "spec/helpmeout/formatter_spec.rb",
     "spec/helpmeout_spec.rb",
     "spec/spec_helper.rb"
   ]
@@ -35,6 +39,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Collect and suggest bugfixes}
   s.test_files = [
+    "spec/helpmeout/formatter_spec.rb",
     "spec/helpmeout_spec.rb",
     "spec/spec_helper.rb"
   ]
@@ -46,34 +51,67 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rspec>, ["~> 2.0.0"])
       s.add_runtime_dependency(%q<sqlite3-ruby>, [">= 0"])
+      s.add_runtime_dependency(%q<rails>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-core>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-sqlite-adapter>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-migrations>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-constraints>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, ["~> 2.0.0"])
+      s.add_development_dependency(%q<ruby-debug>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_runtime_dependency(%q<rails>, [">= 0"])
+      s.add_runtime_dependency(%q<rspec>, ["~> 2.0.0"])
+      s.add_runtime_dependency(%q<dm-core>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-sqlite-adapter>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-migrations>, [">= 0"])
+      s.add_runtime_dependency(%q<dm-constraints>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, ["~> 2.0.0"])
       s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
+      s.add_dependency(%q<rails>, [">= 0"])
+      s.add_dependency(%q<dm-core>, [">= 0"])
+      s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
+      s.add_dependency(%q<dm-migrations>, [">= 0"])
+      s.add_dependency(%q<dm-constraints>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
       s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<ruby-debug>, [">= 0"])
+      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+      s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<rails>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.0.0"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
-      s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<dm-core>, [">= 0"])
+      s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
+      s.add_dependency(%q<dm-migrations>, [">= 0"])
+      s.add_dependency(%q<dm-constraints>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, ["~> 2.0.0"])
     s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
+    s.add_dependency(%q<rails>, [">= 0"])
+    s.add_dependency(%q<dm-core>, [">= 0"])
+    s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
+    s.add_dependency(%q<dm-migrations>, [">= 0"])
+    s.add_dependency(%q<dm-constraints>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
     s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<ruby-debug>, [">= 0"])
+    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+    s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+    s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<rails>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.0.0"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
-    s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<dm-core>, [">= 0"])
+    s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
+    s.add_dependency(%q<dm-migrations>, [">= 0"])
+    s.add_dependency(%q<dm-constraints>, [">= 0"])
   end
 end
 

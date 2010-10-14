@@ -1,3 +1,4 @@
+require 'dm-core'
 module Helpmeout
   class FailedTestFile
     include DataMapper::Resource

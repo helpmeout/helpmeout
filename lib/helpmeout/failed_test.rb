@@ -1,3 +1,5 @@
+require 'dm-core'
+require 'dm-constraints'
 module Helpmeout
   class FailedTest
     include DataMapper::Resource
@@ -7,6 +9,6 @@ module Helpmeout
     property :backtrace, String
     property :example_description, String
 
-    has n, :failed_test_files, :dependent => :destroy
+    has n, :failed_test_files, :constraint => :destroy!
   end
 end
