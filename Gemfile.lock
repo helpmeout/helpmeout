@@ -88,6 +88,8 @@ GEM
       thor (~> 0.14.0)
     rake (0.8.7)
     rcov (0.9.9)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
     rspec (2.0.0)
       rspec-core (= 2.0.0)
       rspec-expectations (= 2.0.0)
@@ -121,6 +123,7 @@ DEPENDENCIES
   jeweler (~> 1.5.0.pre5)
   rails
   rcov
+  rest-client
   rspec (~> 2.0.0)
   ruby-debug
   sqlite3-ruby

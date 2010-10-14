@@ -16,12 +16,16 @@ module Helpmeout
       project_files.each do |file_path|
         create_failed_test_file(file_path, inserted_test.id)
       end
+      puts "=" * 40
+      puts "FAILED: " + example.full_description
     end
 
     def example_passed(example)
       if failed_test = matching_failed_test(example)
         service.add_fix(failed_test)
       end
+      puts "=" * 40
+      puts "PASSED: " + example.full_description
     end
 
 
@@ -56,7 +60,7 @@ module Helpmeout
     end
 
     def service
-
+      @service ||= Service.new
     end
 
   end

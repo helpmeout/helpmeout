@@ -19,3 +19,4 @@ gem "dm-core"
 gem "dm-sqlite-adapter"
 gem "dm-migrations"
 gem "dm-constraints"
+gem 'rest-client'

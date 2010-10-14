@@ -1,7 +1,8 @@
 require 'dm-core'
 require 'dm-migrations'
 require 'rails/all'
-DataMapper::Logger.new($stdout, :debug)
+require 'helpmeout/service'
+
 uri = "sqlite://#{File.expand_path('~')}/helpmeout.db"
 puts uri
 DataMapper.setup(:default, uri)
