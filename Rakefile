@@ -32,6 +32,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_dependency "dm-migrations"
   gem.add_dependency "dm-constraints"
   gem.add_dependency "rest-client"
+  gem.add_dependency "bundler"
 end
 Jeweler::RubygemsDotOrgTasks.new
 
