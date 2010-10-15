@@ -31,7 +31,10 @@ Gem::Specification.new do |s|
     "lib/helpmeout/failed_test_file.rb",
     "lib/helpmeout/formatter.rb",
     "lib/helpmeout/service.rb",
+    "spec/helpmeout/fix_no_files.xml",
+    "spec/helpmeout/fix_one_file.xml",
     "spec/helpmeout/formatter_spec.rb",
+    "spec/helpmeout/service_spec.rb",
     "spec/helpmeout_spec.rb",
     "spec/spec_helper.rb"
   ]
@@ -41,6 +44,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Collect and suggest bugfixes}
   s.test_files = [
     "spec/helpmeout/formatter_spec.rb",
+    "spec/helpmeout/service_spec.rb",
     "spec/helpmeout_spec.rb",
     "spec/spec_helper.rb"
   ]
