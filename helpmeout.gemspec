@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Manuel Kallenbachj"]
-  s.date = %q{2010-10-14}
+  s.date = %q{2010-10-15}
   s.description = %q{Yet to be determined}
   s.email = %q{manuel.kallenbach@gmail.com}
   s.extra_rdoc_files = [
@@ -58,6 +58,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<dm-migrations>, [">= 0"])
       s.add_runtime_dependency(%q<dm-constraints>, [">= 0"])
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
+      s.add_runtime_dependency(%q<builder>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
@@ -72,6 +73,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<dm-migrations>, [">= 0"])
       s.add_runtime_dependency(%q<dm-constraints>, [">= 0"])
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
+      s.add_runtime_dependency(%q<bundler>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, ["~> 2.0.0"])
       s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
@@ -81,6 +83,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<dm-migrations>, [">= 0"])
       s.add_dependency(%q<dm-constraints>, [">= 0"])
       s.add_dependency(%q<rest-client>, [">= 0"])
+      s.add_dependency(%q<builder>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
       s.add_dependency(%q<rcov>, [">= 0"])
@@ -95,6 +98,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<dm-migrations>, [">= 0"])
       s.add_dependency(%q<dm-constraints>, [">= 0"])
       s.add_dependency(%q<rest-client>, [">= 0"])
+      s.add_dependency(%q<bundler>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, ["~> 2.0.0"])
@@ -105,6 +109,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<dm-migrations>, [">= 0"])
     s.add_dependency(%q<dm-constraints>, [">= 0"])
     s.add_dependency(%q<rest-client>, [">= 0"])
+    s.add_dependency(%q<builder>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
     s.add_dependency(%q<rcov>, [">= 0"])
@@ -119,6 +124,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<dm-migrations>, [">= 0"])
     s.add_dependency(%q<dm-constraints>, [">= 0"])
     s.add_dependency(%q<rest-client>, [">= 0"])
+    s.add_dependency(%q<bundler>, [">= 0"])
   end
 end
 

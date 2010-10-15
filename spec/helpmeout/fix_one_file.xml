@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fix>
+  <exception_message>Something very bad happened</exception_message>
+  <backtrace>/home/user/file.rb
+/home/user/other_file.rb
+/lib/rails/whatever.rb</backtrace>
+  <fix_files_attributes>
+    <path></path>
+    <content_before></content_before>
+    <content_after></content_after>
+  </fix_files_attributes>
+  <fix_files_attributes>
+    <path>path/file.rb</path>
+    <content_before>Broken
+File
+Content</content_before>
+    <content_after>Fixed
+File
+Content</content_after>
+  </fix_files_attributes>
+</fix>
