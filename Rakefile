@@ -33,6 +33,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_dependency "dm-constraints"
   gem.add_dependency "rest-client"
   gem.add_dependency "builder"
+  gem.add_dependency "differ"
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -43,7 +44,7 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
 end
 
 RSpec::Core::RakeTask.new(:rcov) do |spec|
-  spec.pattern = 'spec/**/*_spec.rb'
+  spec.pattern = FileList['spec/**/*_spec.rb']
   spec.rcov = true
 end
 

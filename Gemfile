@@ -21,3 +21,4 @@ gem "dm-migrations"
 gem "dm-constraints"
 gem 'rest-client'
 gem 'builder'
+gem 'differ'

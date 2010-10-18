@@ -28,4 +28,21 @@ describe "Service" do
     end
   end
 
+  describe "query_fix" do
+    it 'should query the server for fixes with a cleaned backtrace' do
+      backtrace = [
+        "/home/user/ruby/whatever.rb:48", 
+        "/home/user/project/some_model.rb:12", 
+        "/home/user/project/some_controller.rb:23",
+        "/home/user/ruby/palim.rb:300"
+      ]
+      expected_backtrace = 
+        "/home/user/ruby/whatever.rb:48\n%\n%\n/home/user/ruby/palim.rb:300"
+      Hash.should_receive(:from_xml).with(:response).and_return(:fixes_hash)
+      Rails.stub(:root => "/home/user/project")
+      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => expected_backtrace}).and_return(:response)
+      @service.query_fix(backtrace).should == :fixes_hash
+    end
+  end
+
 end

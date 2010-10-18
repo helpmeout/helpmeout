@@ -1,4 +1,4 @@
-require 'helpmeout'
+require File.dirname(__FILE__) + "/../lib/helpmeout"
 require 'rspec'
 require 'active_support/all'
 

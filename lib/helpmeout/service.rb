@@ -1,11 +1,18 @@
 require 'rest_client'
 require 'builder'
+require 'active_support/all'
 
 module Helpmeout
   class Service
     
     def add_fix(failed_test)
-      puts RestClient.post 'http://localhost:3000/fixes', generate_fix_xml(failed_test), :content_type => :xml
+      RestClient.post 'http://localhost:3000/fixes', generate_fix_xml(failed_test), :content_type => :xml
+    end
+
+    def query_fix(backtrace)
+      cleaned_backtrace = backtrace.collect {|line| line.starts_with?(Rails.root) ? '%' : line}.join("\n")
+      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => cleaned_backtrace})
+      Hash.from_xml response
     end
 
     private 

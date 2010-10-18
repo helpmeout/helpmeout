@@ -70,7 +70,7 @@ describe "Formatter" do
       @example = stub("Example",
                        :execution_result => 
                             {:exception_encountered => @exception},
-                       :full_description => :description
+                       :full_description => 'description'
                      )
     end
 
@@ -81,7 +81,7 @@ describe "Formatter" do
 
     it "should create a failed test" do
       @formatter.should_receive(:create_failed_test).with(
-        :exception_message, "file1:12\nfile2:23", :description)
+        :exception_message, "file1:12\nfile2:23", 'description')
         @formatter.example_failed(@example)
     end
 
@@ -104,15 +104,17 @@ describe "Formatter" do
     end
 
     it "should do nothing if the example did not fail before" do
-      @formatter.should_receive(:matching_failed_test).with(:example).and_return(nil)
+      example = stub('Example').as_null_object
+      @formatter.should_receive(:matching_failed_test).with(example).and_return(nil)
       @formatter.should_not_receive(:service)
-      @formatter.example_passed(:example)
+      @formatter.example_passed(example)
     end
 
     it "should call service.add_fix if the example failed before" do
-      @formatter.should_receive(:matching_failed_test).with(:example).and_return(:failed_test)
+      example = stub('Example').as_null_object
+      @formatter.should_receive(:matching_failed_test).with(example).and_return(:failed_test)
       @service.should_receive(:add_fix).with(:failed_test)
-      @formatter.example_passed(:example)
+      @formatter.example_passed(example)
     end
   end
 

@@ -4,7 +4,6 @@ require 'rails/all'
 require 'helpmeout/service'
 
 uri = "sqlite://#{File.expand_path('~')}/helpmeout.db"
-puts uri
 DataMapper.setup(:default, uri)
 
 require 'helpmeout/failed_test'
