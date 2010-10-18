@@ -2,7 +2,6 @@ require 'dm-core'
 require 'dm-migrations'
 require 'rails/all'
 require 'helpmeout/service'
-
 uri = "sqlite://#{File.expand_path('~')}/helpmeout.db"
 DataMapper.setup(:default, uri)
 
