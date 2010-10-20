@@ -50,6 +50,7 @@
     def example_passed(example)
       if failed_test = matching_failed_test(example)
         service.add_fix(failed_test)
+        failed_test.destroy!
       end
     end
 
