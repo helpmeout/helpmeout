@@ -1,12 +1,18 @@
-  require 'rspec/core/formatters/base_text_formatter'
-  require 'helpmeout/failed_test'
-  require 'helpmeout/failed_test_file'
-  require 'differ'
+require 'dm-core'
+require 'dm-migrations'
+require 'rspec/core/formatters/base_text_formatter'
+require 'helpmeout/failed_test'
+require 'helpmeout/failed_test_file'
+require 'differ'
 
   module Helpmeout
     class Formatter < RSpec::Core::Formatters::BaseTextFormatter
 
       def start(example_count)
+        project_root = Rails.root
+        DataMapper.setup(:default, 'sqlite://' + File.join (project_root, '/helpmeout.db'))
+        DataMapper.finalize
+        DataMapper.auto_upgrade!
         output.puts(html_header)
       end
       
@@ -50,6 +56,7 @@
     def example_passed(example)
       if failed_test = matching_failed_test(example)
         service.add_fix(failed_test)
+        failed_test.destroy!
       end
     end
 

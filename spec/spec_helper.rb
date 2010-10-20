@@ -7,5 +7,19 @@ require 'active_support/all'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  
+
+  config.before(:all) do
+    @adapter = DataMapper.setup(:default, 'sqlite::memory:')
+    DataMapper.finalize
+    DataMapper.auto_migrate!
+  end
+
+  config.before(:each) do
+    DataMapper::Repository.context << repository(:default)
+  end
+
+  config.after(:each) do
+    DataMapper::Repository.context.pop
+  end
+
 end

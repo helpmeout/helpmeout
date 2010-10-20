@@ -6,6 +6,19 @@ describe "Formatter" do
   before(:each) do
     @output = StringIO.new
     @formatter = Helpmeout::Formatter.new(@output)
+    @service = stub("Service").as_null_object
+    @formatter.stub(:service => @service)
+  end
+
+  describe 'start' do
+    it "should set up the database" do
+      project_root = '/path/to/project/'
+      Rails.stub(:root).and_return(project_root)
+      DataMapper.should_receive(:setup).with(:default, 'sqlite:///path/to/project/helpmeout.db')
+      DataMapper.should_receive(:finalize)
+      DataMapper.should_receive(:auto_upgrade!)
+      @formatter.start(37)
+    end
   end
 
   describe "get_project_files" do
@@ -94,6 +107,12 @@ describe "Formatter" do
       @formatter.should_receive(:create_failed_test_file).with("file2", 37) 
       @formatter.example_failed(@example)
     end
+
+    it "should query for a fix" do
+      @service.should_receive(:query_fix).with(@exception.backtrace).and_return({})
+      @formatter.example_failed(@example)
+    end
+
   end
   
 
@@ -101,6 +120,7 @@ describe "Formatter" do
     before(:each) do
       @service = stub("Service").as_null_object
       @formatter.stub(:service => @service)
+      @failed_test = stub("Failed Test").as_null_object
     end
 
     it "should do nothing if the example did not fail before" do
@@ -111,9 +131,16 @@ describe "Formatter" do
     end
 
     it "should call service.add_fix if the example failed before" do
-      example = stub('Example').as_null_object
-      @formatter.should_receive(:matching_failed_test).with(example).and_return(:failed_test)
-      @service.should_receive(:add_fix).with(:failed_test)
+      example = stub('Example')
+      @formatter.should_receive(:matching_failed_test).with(example).and_return(@failed_test)
+      @service.should_receive(:add_fix).with(@failed_test)
+      @formatter.example_passed(example)
+    end
+
+    it "should destroy the failed test generated when the example failed before" do
+      example = stub('Example')
+      @formatter.should_receive(:matching_failed_test).with(example).and_return(@failed_test)
+      @failed_test.should_receive(:destroy!)
       @formatter.example_passed(example)
     end
   end
