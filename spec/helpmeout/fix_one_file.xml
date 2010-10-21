@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fix>
   <exception_message>Something very bad happened</exception_message>
+  <exception_classname>ExceptionClass</exception_classname>
   <backtrace>/home/user/file.rb
 /home/user/other_file.rb
 EXCLUDE/whatever.rb</backtrace>

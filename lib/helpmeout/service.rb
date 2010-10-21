@@ -20,6 +20,7 @@ module Helpmeout
       xml.instruct!
       xml.fix do |f|
         f.exception_message failed_test.exception_message
+        f.exception_classname failed_test.exception_classname
         f.backtrace clean_backtrace(failed_test.backtrace)
         if failed_test.failed_test_files.any? 
           f.fix_files_attributes do |ffa|
