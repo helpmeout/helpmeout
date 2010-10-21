@@ -9,8 +9,8 @@ module Helpmeout
       RestClient.post 'http://localhost:3000/fixes', generate_fix_xml(failed_test), :content_type => :xml
     end
 
-    def query_fix(backtrace)
-      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n")})
+    def query_fix(backtrace, exception_classname)
+      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname})
       Hash.from_xml response
     end
 

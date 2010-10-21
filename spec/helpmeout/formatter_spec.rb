@@ -111,7 +111,7 @@ describe "Formatter" do
     end
 
     it "should query for a fix" do
-      @service.should_receive(:query_fix).with(@exception.backtrace).and_return({})
+      @service.should_receive(:query_fix).with(@exception.backtrace, 'ExceptionClass').and_return({})
       @formatter.example_failed(@example)
     end
 

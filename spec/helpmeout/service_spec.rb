@@ -30,12 +30,12 @@ describe "Service" do
   end
 
   describe "query_fix" do
-    it 'should query the server for fixes with a cleaned backtrace' do
+    it 'should query the server for fixes with a cleaned backtrace and the exception class' do
       backtrace = "/home/user/ruby/whatever.rb:48\n%\n%\n/home/user/ruby/palim.rb:300"
       @service.should_receive(:clean_backtrace).with(backtrace).and_return(['cleaned','backtrace'])
       Hash.should_receive(:from_xml).with(:response).and_return(:fixes_hash)
-      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => "cleaned\nbacktrace"}).and_return(:response)
-      @service.query_fix(backtrace).should == :fixes_hash
+      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => "cleaned\nbacktrace", :exception_classname => :exception_classname}).and_return(:response)
+      @service.query_fix(backtrace, :exception_classname).should == :fixes_hash
     end
   end
 

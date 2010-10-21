@@ -34,7 +34,7 @@ require 'differ'
         output.puts "<dt>Message:</dt>"
         output.puts "<dd>#{exception.message}</dd>"
         output.puts "</dl>"
-        fixes = service.query_fix(exception.backtrace)
+        fixes = service.query_fix(exception.backtrace, exception.class.name)
         if fixes['fixes']
           fixes['fixes'].each do |fix|
             output.puts "<div class='fix'>"
