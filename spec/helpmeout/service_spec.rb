@@ -45,4 +45,34 @@ describe "Service" do
     end
   end
 
+
+  describe 'clean_backtrace' do
+    it 'removes files in the project directory from the backtrace' do
+      Helpmeout::Config.stub(:exclude_prefixes => [])
+      Rails.stub(:root => '/projects/this')
+      backtrace = ['/projects/this/fail.rb', '/lib/something/else.rb']
+      @service.send(:clean_backtrace, backtrace).should == ['/lib/something/else.rb']
+    end
+
+    it 'replaces the exclude prefixes with EXCLUDE' do
+      Helpmeout::Config.stub(:exclude_prefixes => [ '/lib/something',
+                                                    '/projects/this/vendor' ])
+      backtrace = [ '/lib/something/ruby.rb', 
+                    '/project/this/palim.rb', 
+                    '/projects/this/vendor/plugin.rb' ]
+
+      @service.send(:clean_backtrace, backtrace).should == [  'EXCLUDE/ruby.rb',
+                                                              '/project/this/palim.rb',
+                                                              'EXCLUDE/plugin.rb' ]
+    end
+
+    it 'keeps files with exclude_prefix even if they are in the project path' do
+      Rails.stub(:root).and_return('/home/projects')
+      Helpmeout::Config.stub(:exclude_prefixes => '/home/projects/vendor')
+      backtrace = [ '/home/projects/remove.rb',
+                    '/home/projects/vendor/keep.rb' ]
+      @service.send(:clean_backtrace, backtrace).should == [ 'EXCLUDE/keep.rb' ]
+    end
+  end
+
 end

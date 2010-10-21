@@ -40,6 +40,17 @@ module Helpmeout
       xml.target!
     end
 
+    def clean_backtrace(backtrace)
+      backtrace.collect do |line|
+        Config.exclude_prefixes.each do |prefix|
+          line = line.gsub prefix, "EXCLUDE"
+        end
+
+        unless line.starts_with?(Rails.root)
+          line
+        end
+      end.compact
+    end
 
   end
 end
