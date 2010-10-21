@@ -3,7 +3,7 @@ module Helpmeout
 
     private
     def self.config
-      @config ||= defaults.merge YAML.load_file(File.join(Rails.root, 'helpmeout.yaml')).symbolize_keys!
+      @config ||= self.defaults.merge YAML.load_file(File.join(Rails.root, 'helpmeout.yaml')).symbolize_keys!
     end
 
     def self.method_missing(name, *args, &block)

@@ -21,7 +21,7 @@ require 'differ'
         backtrace = exception.backtrace.join("\n")
 
         delete_failed_test(example)
-        inserted_test = create_failed_test exception.message, backtrace, example.full_description
+        inserted_test = create_failed_test exception.message, exception.class.name, backtrace, example.full_description
 
         project_files = get_project_files(exception.backtrace)
         project_files.each do |file_path|
@@ -83,8 +83,9 @@ require 'differ'
                             :failed_test_id => failed_test_id)
     end
 
-    def create_failed_test(exception_message, backtrace, example_description)
+    def create_failed_test(exception_message, exception_classname, backtrace, example_description)
       FailedTest.create(:exception_message => exception_message,
+                        :exception_classname => exception_classname,
                         :backtrace => backtrace,
                         :example_description => example_description
                        )

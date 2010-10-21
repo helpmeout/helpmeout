@@ -4,6 +4,7 @@ require 'rails'
 
 describe "Service" do
   before(:each) do
+    Helpmeout::Config.stub(:exclude_prefixes => ['/lib/rails'])
     @service = Helpmeout::Service.new
     @failed_test = Helpmeout::FailedTest.new( 
                     :exception_message => 'Something very bad happened',
@@ -31,9 +32,9 @@ describe "Service" do
   describe "query_fix" do
     it 'should query the server for fixes with a cleaned backtrace' do
       backtrace = "/home/user/ruby/whatever.rb:48\n%\n%\n/home/user/ruby/palim.rb:300"
-      @service.should_receive(:clean_backtrace).with(backtrace).and_return(:cleaned_backtrace)
+      @service.should_receive(:clean_backtrace).with(backtrace).and_return(['cleaned','backtrace'])
       Hash.should_receive(:from_xml).with(:response).and_return(:fixes_hash)
-      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => :cleaned_backtrace}).and_return(:response)
+      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => "cleaned\nbacktrace"}).and_return(:response)
       @service.query_fix(backtrace).should == :fixes_hash
     end
   end

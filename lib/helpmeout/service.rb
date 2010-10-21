@@ -10,8 +10,7 @@ module Helpmeout
     end
 
     def query_fix(backtrace)
-      cleaned_backtrace = backtrace.collect {|line| line.starts_with?(Rails.root) ? '%' : line}.join("\n")
-      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => cleaned_backtrace})
+      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n")})
       Hash.from_xml response
     end
 
@@ -21,7 +20,7 @@ module Helpmeout
       xml.instruct!
       xml.fix do |f|
         f.exception_message failed_test.exception_message
-        f.backtrace failed_test.backtrace
+        f.backtrace clean_backtrace(failed_test.backtrace)
         if failed_test.failed_test_files.any? 
           f.fix_files_attributes do |ffa|
             ffa.path "" # hack to always get an array of fixed_files. 

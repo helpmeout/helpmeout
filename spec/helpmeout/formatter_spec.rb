@@ -67,9 +67,10 @@ describe "Formatter" do
   describe "create_failed_test" do
     it "should create a failed test" do
       Helpmeout::FailedTest.should_receive(:create).with(:exception_message => :message,
+                                              :exception_classname => :exception_classname,
                                               :backtrace => :backtrace,
                                               :example_description => :description)
-      @formatter.send(:create_failed_test, :message, :backtrace, :description)
+      @formatter.send(:create_failed_test, :message, :exception_classname, :backtrace, :description)
     end
   end
 
@@ -77,7 +78,8 @@ describe "Formatter" do
     before(:each) do
       @exception = stub("Exception", 
                         :message => :exception_message,
-                        :backtrace => ["file1:12", "file2:23"]
+                        :backtrace => ["file1:12", "file2:23"],
+                        :class => stub(:name => 'ExceptionClass')
                        )
 
       @example = stub("Example",
@@ -94,7 +96,7 @@ describe "Formatter" do
 
     it "should create a failed test" do
       @formatter.should_receive(:create_failed_test).with(
-        :exception_message, "file1:12\nfile2:23", 'description')
+        :exception_message,"ExceptionClass", "file1:12\nfile2:23", 'description')
         @formatter.example_failed(@example)
     end
 

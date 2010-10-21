@@ -3,5 +3,5 @@
   <exception_message>Something very bad happened</exception_message>
   <backtrace>/home/user/file.rb
 /home/user/other_file.rb
-/lib/rails/whatever.rb</backtrace>
+EXCLUDE/whatever.rb</backtrace>
 </fix>
