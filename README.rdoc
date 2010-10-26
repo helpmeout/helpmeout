@@ -1,6 +1,12 @@
 = helpmeout
 
-To install add the gem to the test environment, change spec/spec.opts to contain --format Helpmeout::Formatter and create a file helpmeout.yaml in the projects root cotaining:
+Installation:
+* Add the gem to the test environment:
+  config.gem 'helpmeout'
+ 
+* Change / Add the following line to spec/spec.opts 
+  --format Helpmeout::Formatter 
+* Create a file helpmeout.yaml in the projects root cotaining:
   exclude_prefixes:
     - path prefixes that should be replaced in the stacktrace
   project_root: the root directory of your project
