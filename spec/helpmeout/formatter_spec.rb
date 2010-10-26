@@ -5,25 +5,23 @@ require 'rails'
 describe "Formatter" do
   before(:each) do
     @output = StringIO.new
-    @formatter = Helpmeout::Formatter.new(@output)
+    Helpmeout::DBHelper.stub(:setup)
+    Helpmeout::Config.stub(:project_root => '/home/palim/projects/palim')
+    @formatter = Helpmeout::Formatter.new({}, @output)
     @service = stub("Service").as_null_object
     @formatter.stub(:service => @service)
   end
 
-  describe 'start' do
+  describe 'initialize' do
     it "should set up the database" do
-      project_root = '/path/to/project/'
-      Rails.stub(:root).and_return(project_root)
-      DataMapper.should_receive(:setup).with(:default, 'sqlite:///path/to/project/helpmeout.db')
-      DataMapper.should_receive(:finalize)
-      DataMapper.should_receive(:auto_upgrade!)
-      @formatter.start(37)
+      Helpmeout::DBHelper.should_receive(:setup)
+      Helpmeout::Formatter.new({}, StringIO.new)
     end
   end
 
   describe "get_project_files" do
     it "should return the files in the backtrace that are in the projects directory" do
-      Rails.stub(:root).and_return("/home/user/rails/project")
+      Helpmeout::Config.stub(:project_root).and_return("/home/user/rails/project")
       backtrace = [ 
         "/home/user/rails/project/spec/models/story_spec.rb:34",
         "/home/user/.rvm/rubies/whatever.rb:54",
@@ -76,28 +74,27 @@ describe "Formatter" do
 
   describe "example_failed" do
     before(:each) do
-      @exception = stub("Exception", 
-                        :message => :exception_message,
-                        :backtrace => ["file1:12", "file2:23"],
-                        :class => stub(:name => 'ExceptionClass')
-                       )
+      @formatter.stub(:matching_failed_test)
+      @failure = stub(:exception => stub("Exception", 
+                          :message => :exception_message,
+                          :backtrace => ["file1:12", "file2:23"],
+                          :class => stub(:name => 'ExceptionClass')
+                         ))
 
       @example = stub("Example",
-                       :execution_result => 
-                            {:exception_encountered => @exception},
-                       :full_description => 'description'
+                       :description => 'description'
                      )
     end
 
     it "should call delete_failed_test" do
       @formatter.should_receive(:delete_failed_test).with(@example)
-      @formatter.example_failed(@example)
+      @formatter.example_failed(@example, 0, @failure)
     end
 
     it "should create a failed test" do
       @formatter.should_receive(:create_failed_test).with(
         :exception_message,"ExceptionClass", "file1:12\nfile2:23", 'description')
-        @formatter.example_failed(@example)
+        @formatter.example_failed(@example, 0 , @failure)
     end
 
     it "should create failed_test_files for the project files" do
@@ -107,12 +104,12 @@ describe "Formatter" do
         with(["file1:12", "file2:23"]).and_return(["file1", "file2"])
       @formatter.should_receive(:create_failed_test_file).with("file1", 37) 
       @formatter.should_receive(:create_failed_test_file).with("file2", 37) 
-      @formatter.example_failed(@example)
+      @formatter.example_failed(@example, 0 , @failure)
     end
 
     it "should query for a fix" do
-      @service.should_receive(:query_fix).with(@exception.backtrace, 'ExceptionClass').and_return({})
-      @formatter.example_failed(@example)
+      @service.should_receive(:query_fix).with(@failure.exception.backtrace, 'ExceptionClass').and_return({})
+      @formatter.example_failed(@example, 0, @failure)
     end
 
   end
@@ -144,6 +141,15 @@ describe "Formatter" do
       @formatter.should_receive(:matching_failed_test).with(example).and_return(@failed_test)
       @failed_test.should_receive(:destroy!)
       @formatter.example_passed(example)
+    end
+  end
+
+  describe 'matching_failed_test' do
+    it 'should find a failed test with the same example_description' do
+      example = stub(:description => :palim)
+      Helpmeout::FailedTest.should_receive(:first).with(
+        :example_description => :palim).and_return(:match)
+      @formatter.send(:matching_failed_test, example).should == :match
     end
   end
 

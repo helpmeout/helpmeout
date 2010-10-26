@@ -7,14 +7,14 @@ source "http://rubygems.org"
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "bundler", "~> 1.0.0"
-  gem "jeweler", "~> 1.5.0.pre5"
+  gem "jeweler", "~> 1.4.0"
   gem "rcov", ">= 0"
   gem "ruby-debug"
 end
 
-gem "rspec", "~> 2.0.0"
+gem "rspec", "<2.0.0"
 gem "sqlite3-ruby"
-gem "rails"
+gem "rails", "<3.0.0"
 gem "dm-core"
 gem "dm-sqlite-adapter"
 gem "dm-migrations"

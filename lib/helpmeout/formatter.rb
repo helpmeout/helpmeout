@@ -1,27 +1,25 @@
 require 'dm-core'
 require 'dm-migrations'
-require 'rspec/core/formatters/base_text_formatter'
+require 'spec/runner/formatter/base_formatter'
 require 'helpmeout/failed_test'
 require 'helpmeout/failed_test_file'
 require 'differ'
 
   module Helpmeout
-    class Formatter < RSpec::Core::Formatters::BaseTextFormatter
+    class Formatter < Spec::Runner::Formatter::BaseFormatter
 
-      def start(example_count)
-        project_root = Rails.root
-        DataMapper.setup(:default, 'sqlite://' + File.join (project_root, '/helpmeout.db'))
-        DataMapper.finalize
-        DataMapper.auto_upgrade!
+      def initialize(options, output)
+        @output = output
+        DBHelper.setup
         output.puts(html_header)
       end
       
-      def example_failed(example)
-        exception = example.execution_result[:exception_encountered]
+      def example_failed(example, counter, failure)
+        exception = failure.exception
         backtrace = exception.backtrace.join("\n")
 
         delete_failed_test(example)
-        inserted_test = create_failed_test exception.message, exception.class.name, backtrace, example.full_description
+        inserted_test = create_failed_test exception.message, exception.class.name, backtrace, example.description
 
         project_files = get_project_files(exception.backtrace)
         project_files.each do |file_path|
@@ -29,7 +27,7 @@ require 'differ'
         end
 
         output.puts "<div class='failed-example'>"
-        output.puts "<h1>Example: #{example.full_description} failed. </h1>"
+        output.puts "<h1>Example: #{example.description} failed. </h1>"
         output.puts "<dl>"
         output.puts "<dt>Message:</dt>"
         output.puts "<dd>#{exception.message}</dd>"
@@ -92,15 +90,19 @@ require 'differ'
     end
 
     def matching_failed_test(example)
-      FailedTest.first(:example_description => example.full_description)
+      FailedTest.first(:example_description => example.description)
     end
 
     def get_project_files(backtrace)
-      backtrace.collect {|line| line.starts_with?(Rails.root) ? line.split(':')[0] : nil }.uniq.compact
+      backtrace.collect {|line| line.starts_with?(Config.project_root) ? line.split(':')[0] : nil }.uniq.compact
     end
 
     def service
       @service ||= Service.new
+    end
+
+    def output
+      @output
     end
 
 

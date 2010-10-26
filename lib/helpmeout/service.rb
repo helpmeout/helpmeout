@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'rest_client'
 require 'builder'
 require 'active_support/all'
@@ -46,7 +47,7 @@ module Helpmeout
           line = line.gsub prefix, "EXCLUDE"
         end
 
-        unless line.starts_with?(Rails.root)
+        unless line.starts_with?(Config::project_root)
           line
         end
       end.compact

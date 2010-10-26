@@ -1,12 +1,13 @@
 require File.dirname(__FILE__) + "/../lib/helpmeout"
-require 'rspec'
+require 'spec'
+require 'spec/autorun'
 require 'active_support/all'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
-RSpec.configure do |config|
+Spec::Runner.configure do |config|
 
   config.before(:all) do
     @adapter = DataMapper.setup(:default, 'sqlite::memory:')
