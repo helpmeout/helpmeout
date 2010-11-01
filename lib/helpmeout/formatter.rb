@@ -94,7 +94,10 @@ require 'differ'
     end
 
     def get_project_files(backtrace)
-      backtrace.collect {|line| line.starts_with?(Config.project_root) ? line.split(':')[0] : nil }.uniq.compact
+      backtrace.collect do |line| 
+        filename = line.split(':')[0]
+        File.expand_path(filename).starts_with?(Config.project_root) ? filename : nil 
+      end.uniq.compact
     end
 
     def service
