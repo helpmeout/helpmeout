@@ -1,0 +1,23 @@
+<a><%= example.description %></a>
+<% if fixes['fixes'] %>
+  <% fixes['fixes'].each_with_index do |fix, count| %>
+    <% fix['fix_files'].each do |fix_file| %>
+      <div class="errorBox">
+        <div class="errorMeta">
+          <%= fix_file['path'] %>
+        </div>
+        <div class="errorInfo">
+          <pre>
+                      <%= fix_file['content_before'] %>
+                    </pre>
+        </div>
+        <div class="errorInfoMod">
+          <pre>
+                      <%= Differ.diff(fix_file['content_after'], fix_file['content_before']).format_as(:html) %>
+                    </pre>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
+<div style='clear:both;'></div>

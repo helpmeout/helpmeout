@@ -11,7 +11,7 @@ module Helpmeout
     end
 
     def query_fix(backtrace, exception_classname)
-      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname})
+      response = RestClient.get('http://localhost:3000/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname, :code_line => code_line_from_backtrace(backtrace)})
       Hash.from_xml response
     end
 
@@ -42,7 +42,8 @@ module Helpmeout
     end
 
     def clean_backtrace(backtrace)
-      backtrace.collect do |line|
+      expanded_backtrace = expand_backtrace(backtrace)
+      expanded_backtrace.collect do |line|
         Config.exclude_prefixes.each do |prefix|
           line = line.gsub prefix, "EXCLUDE"
         end
@@ -51,6 +52,28 @@ module Helpmeout
           line
         end
       end.compact
+    end
+
+    def expand_backtrace(backtrace)
+      backtrace.collect do |line|
+        segments = line.split(':')
+        segments[0] = File.expand_path(segments[0])
+        segments.join(':')
+      end
+    end
+
+    def code_line_from_backtrace(backtrace)
+      expanded_backtrace = expand_backtrace(backtrace)
+      first_project_line = expanded_backtrace.detect do |line|
+        !Config.exclude_prefixes.any? {|prefix| line.starts_with?(prefix)} && line.starts_with?(Config.project_root)
+      end
+      if first_project_line
+        (filename, line) = first_project_line.split(':')
+        file = File.open(filename)
+        file.readlines[line.to_i - 1]
+      else
+        nil
+      end
     end
 
   end

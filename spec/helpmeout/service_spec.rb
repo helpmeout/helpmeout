@@ -29,11 +29,12 @@ describe "Service" do
   end
 
   describe "query_fix" do
-    it 'should query the server for fixes with a cleaned backtrace and the exception class' do
+    it 'should query the server for fixes with a cleaned backtrace and the exception class and the code line' do
       backtrace = "/home/user/ruby/whatever.rb:48\n%\n%\n/home/user/ruby/palim.rb:300"
       @service.should_receive(:clean_backtrace).with(backtrace).and_return(['cleaned','backtrace'])
+      @service.should_receive(:code_line_from_backtrace).with(backtrace).and_return('code line')
       Hash.should_receive(:from_xml).with(:response).and_return(:fixes_hash)
-      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => "cleaned\nbacktrace", :exception_classname => :exception_classname}).and_return(:response)
+      RestClient.should_receive(:get).with('http://localhost:3000/fixes', :params => {:backtrace => "cleaned\nbacktrace", :exception_classname => :exception_classname, :code_line => 'code line'}).and_return(:response)
       @service.query_fix(backtrace, :exception_classname).should == :fixes_hash
     end
   end
@@ -44,7 +45,8 @@ describe "Service" do
       Helpmeout::Config.stub(:exclude_prefixes => [])
       Helpmeout::Config.stub(:project_root => '/projects/this')
       backtrace = ['/projects/this/fail.rb', '/lib/something/else.rb']
-      @service.send(:clean_backtrace, backtrace).should == ['/lib/something/else.rb']
+      @service.should_receive(:expand_backtrace).with(:backtrace).and_return(backtrace)
+      @service.send(:clean_backtrace, :backtrace).should == ['/lib/something/else.rb']
     end
 
     it 'replaces the exclude prefixes with EXCLUDE' do
@@ -54,7 +56,8 @@ describe "Service" do
                     '/project/this/palim.rb', 
                     '/projects/this/vendor/plugin.rb' ]
 
-      @service.send(:clean_backtrace, backtrace).should == [  'EXCLUDE/ruby.rb',
+      @service.should_receive(:expand_backtrace).with(:backtrace).and_return(backtrace)
+      @service.send(:clean_backtrace, :backtrace).should == [  'EXCLUDE/ruby.rb',
                                                               '/project/this/palim.rb',
                                                               'EXCLUDE/plugin.rb' ]
     end
@@ -64,7 +67,30 @@ describe "Service" do
       Helpmeout::Config.stub(:exclude_prefixes => '/home/projects/vendor')
       backtrace = [ '/home/projects/remove.rb',
                     '/home/projects/vendor/keep.rb' ]
-      @service.send(:clean_backtrace, backtrace).should == [ 'EXCLUDE/keep.rb' ]
+      @service.should_receive(:expand_backtrace).with(:backtrace).and_return(backtrace)
+      @service.send(:clean_backtrace, :backtrace).should == [ 'EXCLUDE/keep.rb' ]
+    end
+
+  end
+
+  describe 'expand_backtrace' do
+    it 'expands relative paths in the backtrace' do
+      backtrace = [ '/lib/ruby/file.rb:13', './spec/file.rb:12' ]
+      File.should_receive(:expand_path).with('/lib/ruby/file.rb').and_return('/lib/ruby/file.rb')
+      File.should_receive(:expand_path).with('./spec/file.rb').and_return('/projects/this/spec/file.rb')
+      @service.send(:expand_backtrace, backtrace).should == ['/lib/ruby/file.rb:13', '/projects/this/spec/file.rb:12' ]
+    end
+  end
+
+  describe 'code_line_from_backtrace' do
+    it 'return the line of the first project file in the backtrace' do
+      Helpmeout::Config.stub(:project_root).and_return('/home/projects')
+      Helpmeout::Config.stub(:exclude_prefixes => '/home/projects/vendor')
+      backtrace = "/home/projects/vendor/rails/some.rb:13\n/lib/ruby.rb:12\n/home/projects/models/post.rb:2"
+      file_stub = stub(:readlines => ['Line 1', 'Line 2'])
+      @service.stub(:expand_backtrace).and_return(backtrace)
+      File.should_receive(:open).with('/home/projects/models/post.rb').and_return(file_stub)
+      @service.send(:code_line_from_backtrace, backtrace).should == 'Line 2'
     end
   end
 

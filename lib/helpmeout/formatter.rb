@@ -11,7 +11,8 @@ require 'differ'
       def initialize(options, output)
         @output = output
         DBHelper.setup
-        output.puts(html_header)
+        @body = ''
+
       end
       
       def example_failed(example, counter, failure)
@@ -25,30 +26,10 @@ require 'differ'
         project_files.each do |file_path|
           create_failed_test_file(file_path, inserted_test.id)
         end
-
-        output.puts "<div class='failed-example'>"
-        output.puts "<h1>Example: #{example.description} failed. </h1>"
-        output.puts "<dl>"
-        output.puts "<dt>Message:</dt>"
-        output.puts "<dd>#{exception.message}</dd>"
-        output.puts "</dl>"
         fixes = service.query_fix(exception.backtrace, exception.class.name)
-        if fixes['fixes']
-          fixes['fixes'].each do |fix|
-            output.puts "<div class='fix'>"
-            output.puts "<h2>Suggested fix:</h2>"
-            fix['fix_files'].each do |fix_file|
-              unless fix_file['content_before'] == fix_file['content_after']
-                diff = Differ.diff(fix_file['content_after'], fix_file['content_before'])
-                output.puts "<pre>"
-                output.puts(diff.format_as(:html))
-                output.puts "</pre>"
-              end
-            end
-          end
-        end
-        output.puts "</div>"
-        output.flush
+
+        template = File.read(File.expand_path('..', __FILE__ ) + '/html/failed_example.rhtml')
+        @body << ERB.new(template).result(binding)
     end
 
     def example_passed(example)
@@ -60,8 +41,11 @@ require 'differ'
 
 
     def dump_summary(duration, example_count, failure_count, pending_count)
-      output.puts '</body>'
-      output.puts '</html>'
+      # output.puts '</body>'
+      # output.puts '</html>'
+      # output.flush
+      template = File.read( File.expand_path('..', __FILE__) + '/html/result.rhtml')
+      output.print ERB.new(template).result(binding)
       output.flush
     end
 
