@@ -34,7 +34,7 @@ require 'erb'
         @fixes = service.query_fix(exception.backtrace, exception.class.name)
 
         template = ERB.new(File.new(PATH_TO_ERB).read)
-        output.puts(template.result(binding))
+        @body = template.result(binding)
     end
 
     def example_passed(example)
@@ -45,6 +45,7 @@ require 'erb'
     end
 
     def dump_summary(duration, example_count, failure_count, pending_count)
+      output.puts(@body)
       output.flush
     end
 
