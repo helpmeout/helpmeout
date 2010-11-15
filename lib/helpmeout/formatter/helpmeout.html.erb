@@ -11,7 +11,7 @@
 </div>  <!-- end header div-->
 <div id="mainContent">
 <div id="results">
-Fixes: <%= @fixes['fixes'].size %>
+Fixes: <%= @fixes['fixes'].nil? ? 0 : @fixes['fixes'].size %>
 </div>
 
       <%= @message %>
