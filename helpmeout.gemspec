@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Manuel Kallenbachj"]
-  s.date = %q{2010-10-15}
+  s.authors = ["Manuel Kallenbach"]
+  s.date = %q{2010-11-16}
   s.description = %q{Yet to be determined}
   s.email = %q{manuel.kallenbach@gmail.com}
   s.extra_rdoc_files = [
@@ -27,10 +27,17 @@ Gem::Specification.new do |s|
     "VERSION",
     "helpmeout.gemspec",
     "lib/helpmeout.rb",
+    "lib/helpmeout/config.rb",
+    "lib/helpmeout/db_helper.rb",
     "lib/helpmeout/failed_test.rb",
     "lib/helpmeout/failed_test_file.rb",
     "lib/helpmeout/formatter.rb",
+    "lib/helpmeout/formatter/helpmeout.html.erb",
+    "lib/helpmeout/html/failed_example.rhtml",
+    "lib/helpmeout/html/result.rhtml",
     "lib/helpmeout/service.rb",
+    "spec/helpmeout/config_spec.rb",
+    "spec/helpmeout/db_helper_spec.rb",
     "spec/helpmeout/fix_no_files.xml",
     "spec/helpmeout/fix_one_file.xml",
     "spec/helpmeout/formatter_spec.rb",
@@ -43,6 +50,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Collect and suggest bugfixes}
   s.test_files = [
+    "spec/helpmeout/config_spec.rb",
+    "spec/helpmeout/db_helper_spec.rb",
     "spec/helpmeout/formatter_spec.rb",
     "spec/helpmeout/service_spec.rb",
     "spec/helpmeout_spec.rb",
@@ -54,9 +63,9 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rspec>, ["~> 2.0.0"])
+      s.add_runtime_dependency(%q<rspec>, ["< 2.0.0"])
       s.add_runtime_dependency(%q<sqlite3-ruby>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, [">= 0"])
+      s.add_runtime_dependency(%q<rails>, ["< 3.0.0"])
       s.add_runtime_dependency(%q<dm-core>, [">= 0"])
       s.add_runtime_dependency(%q<dm-sqlite-adapter>, [">= 0"])
       s.add_runtime_dependency(%q<dm-migrations>, [">= 0"])
@@ -64,15 +73,14 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
       s.add_runtime_dependency(%q<builder>, [">= 0"])
       s.add_runtime_dependency(%q<differ>, [">= 0"])
+      s.add_runtime_dependency(%q<launchy>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.4.0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<ruby-debug>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.4.0"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, [">= 0"])
-      s.add_runtime_dependency(%q<rspec>, ["~> 2.0.0"])
       s.add_runtime_dependency(%q<dm-core>, [">= 0"])
       s.add_runtime_dependency(%q<dm-sqlite-adapter>, [">= 0"])
       s.add_runtime_dependency(%q<dm-migrations>, [">= 0"])
@@ -80,10 +88,12 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
       s.add_runtime_dependency(%q<builder>, [">= 0"])
       s.add_runtime_dependency(%q<differ>, [">= 0"])
+      s.add_runtime_dependency(%q<rest-client>, [">= 0"])
+      s.add_runtime_dependency(%q<launchy>, [">= 0"])
     else
-      s.add_dependency(%q<rspec>, ["~> 2.0.0"])
+      s.add_dependency(%q<rspec>, ["< 2.0.0"])
       s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
-      s.add_dependency(%q<rails>, [">= 0"])
+      s.add_dependency(%q<rails>, ["< 3.0.0"])
       s.add_dependency(%q<dm-core>, [">= 0"])
       s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
       s.add_dependency(%q<dm-migrations>, [">= 0"])
@@ -91,15 +101,14 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rest-client>, [">= 0"])
       s.add_dependency(%q<builder>, [">= 0"])
       s.add_dependency(%q<differ>, [">= 0"])
+      s.add_dependency(%q<launchy>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+      s.add_dependency(%q<jeweler>, ["~> 1.4.0"])
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<ruby-debug>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+      s.add_dependency(%q<jeweler>, ["~> 1.4.0"])
       s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<rails>, [">= 0"])
-      s.add_dependency(%q<rspec>, ["~> 2.0.0"])
       s.add_dependency(%q<dm-core>, [">= 0"])
       s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
       s.add_dependency(%q<dm-migrations>, [">= 0"])
@@ -107,11 +116,13 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rest-client>, [">= 0"])
       s.add_dependency(%q<builder>, [">= 0"])
       s.add_dependency(%q<differ>, [">= 0"])
+      s.add_dependency(%q<rest-client>, [">= 0"])
+      s.add_dependency(%q<launchy>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rspec>, ["~> 2.0.0"])
+    s.add_dependency(%q<rspec>, ["< 2.0.0"])
     s.add_dependency(%q<sqlite3-ruby>, [">= 0"])
-    s.add_dependency(%q<rails>, [">= 0"])
+    s.add_dependency(%q<rails>, ["< 3.0.0"])
     s.add_dependency(%q<dm-core>, [">= 0"])
     s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
     s.add_dependency(%q<dm-migrations>, [">= 0"])
@@ -119,15 +130,14 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rest-client>, [">= 0"])
     s.add_dependency(%q<builder>, [">= 0"])
     s.add_dependency(%q<differ>, [">= 0"])
+    s.add_dependency(%q<launchy>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+    s.add_dependency(%q<jeweler>, ["~> 1.4.0"])
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<ruby-debug>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.5.0.pre5"])
+    s.add_dependency(%q<jeweler>, ["~> 1.4.0"])
     s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<rails>, [">= 0"])
-    s.add_dependency(%q<rspec>, ["~> 2.0.0"])
     s.add_dependency(%q<dm-core>, [">= 0"])
     s.add_dependency(%q<dm-sqlite-adapter>, [">= 0"])
     s.add_dependency(%q<dm-migrations>, [">= 0"])
@@ -135,6 +145,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rest-client>, [">= 0"])
     s.add_dependency(%q<builder>, [">= 0"])
     s.add_dependency(%q<differ>, [">= 0"])
+    s.add_dependency(%q<rest-client>, [">= 0"])
+    s.add_dependency(%q<launchy>, [">= 0"])
   end
 end
 

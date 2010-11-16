@@ -22,3 +22,4 @@ gem "dm-constraints"
 gem 'rest-client'
 gem 'builder'
 gem 'differ'
+gem 'launchy'

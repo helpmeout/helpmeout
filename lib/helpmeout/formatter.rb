@@ -5,6 +5,7 @@ require 'helpmeout/failed_test'
 require 'helpmeout/failed_test_file'
 require 'differ'
 require 'erb'
+require 'launchy'
 
   module Helpmeout
     
@@ -13,7 +14,12 @@ require 'erb'
     class Formatter < Spec::Runner::Formatter::BaseFormatter
 
       def initialize(options, output)
-        @output = output
+        if String === output
+          FileUtils.mkdir_p(File.dirname(output))
+          @output = File.open(output, 'w')
+        else
+          @output = output
+        end
         DBHelper.setup
       end
       
@@ -47,6 +53,9 @@ require 'erb'
     def dump_summary(duration, example_count, failure_count, pending_count)
       output.puts(@body)
       output.flush
+      if File === @output
+        Launchy::Browser.run(File.expand_path(@output.path))
+      end
     end
 
     private
