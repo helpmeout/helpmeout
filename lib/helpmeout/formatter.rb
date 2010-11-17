@@ -10,8 +10,10 @@ require 'launchy'
   module Helpmeout
     
     PATH_TO_ERB = "#{File.dirname(__FILE__)}/formatter/helpmeout.html.erb"
+    PATH_TO_EXAMPLE_ERB = "#{File.dirname(__FILE__)}/formatter/failed_example.html.erb"
     
     class Formatter < Spec::Runner::Formatter::BaseFormatter
+      include ERB::Util
 
       def initialize(options, output)
         if String === output
@@ -20,6 +22,7 @@ require 'launchy'
         else
           @output = output
         end
+        @body = ''
         DBHelper.setup
       end
       
@@ -39,8 +42,8 @@ require 'launchy'
         @message = exception.message
         @fixes = service.query_fix(exception.backtrace, exception.class.name)
 
-        template = ERB.new(File.new(PATH_TO_ERB).read)
-        @body = template.result(binding)
+        template = ERB.new(File.new(PATH_TO_EXAMPLE_ERB).read)
+        @body << template.result(binding)
     end
 
     def example_passed(example)
@@ -51,7 +54,8 @@ require 'launchy'
     end
 
     def dump_summary(duration, example_count, failure_count, pending_count)
-      output.puts(@body)
+      template = ERB.new(File.new(PATH_TO_ERB).read)
+      output.puts(template.result(binding))
       output.flush
       if File === @output
         Launchy::Browser.run(File.expand_path(@output.path))

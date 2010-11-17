@@ -1,0 +1,33 @@
+<div class='failed_exampled'>
+  <div id="results">
+    Fixes: <%= @fixes['fixes'].nil? ? 0 : @fixes['fixes'].size %>
+    <br/>
+    <%= h @message %>
+    <br/>
+    <%= h @description %>
+  </div>
+
+  <% if @fixes['fixes'] %>
+    <% @fixes['fixes'].each do |fix| %>
+      <div class="accordion" style="float:left;"  id="tests">
+
+        <% fix['fix_files'].each do |fix_file| %>
+          <div class="errorBox">
+            <% unless fix_file['content_before'] == fix_file['content_after'] %>
+
+              <div class = "errorInfo">
+                <pre> <%= fix_file['content_before'] %> </pre>
+              </div>
+              <div class="errorInfoMod">
+                <pre> <%= Differ.diff(fix_file['content_after'], fix_file['content_before']).format_as(:html) %> </pre>
+              </div>
+            <% end %>
+            </div>
+          <% end %>         
+          <br/>
+        </div> 
+      <% end %>
+    <% end %>
+
+</div> <!-- end ErrorBox -->
+<div style='clear:both'></div>
