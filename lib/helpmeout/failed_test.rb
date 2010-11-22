@@ -5,7 +5,7 @@ module Helpmeout
     include DataMapper::Resource
 
     property :id, Serial
-    property :exception_message, String
+    property :exception_message, String #leftover?
     property :exception_classname, String
     property :backtrace, String
     property :example_description, String
