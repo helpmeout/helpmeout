@@ -6,6 +6,7 @@ require 'helpmeout/failed_test_file'
 require 'differ'
 require 'erb'
 require 'launchy'
+require 'git'
 
   module Helpmeout
     
@@ -24,6 +25,8 @@ require 'launchy'
         end
         @body = ''
         DBHelper.setup
+        repository = File.join(Config.project_root, '.git_helpmeout')
+        @git = Git.init(Config.project_root, {:repository => repository, :index => File.join(repository,'index')})
       end
       
       def example_failed(example, counter, failure)
@@ -34,9 +37,9 @@ require 'launchy'
         inserted_test = create_failed_test exception.message, exception.class.name, backtrace, example.description
 
         project_files = get_project_files(exception.backtrace)
-        project_files.each do |file_path|
-          create_failed_test_file(file_path, inserted_test.id)
-        end
+        # project_files.each do |file_path|
+        #   create_failed_test_file(file_path, inserted_test.id)
+        # end
 
         @description = example.description
         @message = exception.message
@@ -48,6 +51,12 @@ require 'launchy'
 
     def example_passed(example)
       if failed_test = matching_failed_test(example)
+        @git.status.changed.each do |file|
+          if /\.rb$/.match(file[0])
+            create_failed_test_file(file[0],failed_test.id)
+          end
+        end
+        failed_test.failed_test_files.reload
         service.add_fix(failed_test)
         failed_test.destroy!
       end
@@ -60,6 +69,8 @@ require 'launchy'
       if File === @output
         Launchy::Browser.run(File.expand_path(@output.path))
       end
+      @git.add '.'
+      @git.commit_all 'hmo'
     end
 
     private
@@ -72,7 +83,7 @@ require 'launchy'
     end
 
     def create_failed_test_file(path, failed_test_id)
-      file_content = File.read(path)
+      file_content = @git.gblob("HEAD:#{path}").contents
       FailedTestFile.create( :path => path, :content => file_content,
                             :failed_test_id => failed_test_id)
     end

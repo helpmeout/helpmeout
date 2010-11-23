@@ -33,6 +33,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_dependency "differ"
   gem.add_dependency "rest-client"
   gem.add_dependency "launchy"
+  gem.add_dependency "git"
 end
 
 require 'spec'
