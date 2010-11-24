@@ -73,6 +73,10 @@ require 'git'
       @git.commit_all 'hmo'
     end
 
+    def example_group_started(example_group_proxy)
+      @example_group = example_group_proxy
+    end
+
     private
 
     def delete_failed_test(example)

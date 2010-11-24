@@ -1,33 +1,41 @@
-<div class='failed_exampled'>
-  <div id="results">
-    Fixes: <%= @fixes['fixes'].nil? ? 0 : @fixes['fixes'].size %>
-    <br/>
-    <%= h @message %>
-    <br/>
-    <%= h @description %>
-  </div>
-
-  <% if @fixes['fixes'] %>
-    <% @fixes['fixes'].each do |fix| %>
-      <div class="accordion" style="float:left;"  id="tests">
-
+<div class="accordionClick"><a><%=h @example_group.description + ": " + @description %></a></div>
+<div class="accordionContent">
+  <table>
+    <tr class="errorRow">
+      <td>
+        <div class="errorTrace">
+          <h2>Location of the test:</h2>
+          <%= example.location %>
+          <h2>Exception Message:</h2>
+          <pre><%=h @message %></pre>
+          <h2>Backtrace:</h2>
+          <pre><%=h backtrace %></pre>
+        </div>
+      </td>
+    </tr>
+    <% if @fixes['fixes'] %>
+      <tr><td><h2>Fixes</h2></td></tr>
+      <% @fixes['fixes'].each_with_index do |fix, index| %>
+        <tr class="errorFix">
+          <td>
+            <div>Fix <%= index + 1 %></div>
+          </td>
+        </tr>
         <% fix['fix_files'].each do |fix_file| %>
-          <div class="errorBox">
-            <% unless fix_file['content_before'] == fix_file['content_after'] %>
-
-              <div class = "errorInfo">
-                <pre> <%= fix_file['content_before'] %> </pre>
-              </div>
-              <div class="errorInfoMod">
+          <tr class="errorRow">
+            <td>
+              <div class="errorBox">
+                <div class="errorMeta">
+                  <%= fix_file['path'] %>
+                </div>
+                <div class="errorInfo">
                 <pre> <%= Differ.diff(fix_file['content_after'], fix_file['content_before']).format_as(:html) %> </pre>
+                </div>				
               </div>
-            <% end %>
-            </div>
-          <% end %>         
-          <br/>
-        </div> 
+            </td>
+          </tr>
+        <% end %>
       <% end %>
     <% end %>
-
-</div> <!-- end ErrorBox -->
-<div style='clear:both'></div>
+  </table>
+</div>
