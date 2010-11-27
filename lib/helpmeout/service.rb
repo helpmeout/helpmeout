@@ -10,8 +10,8 @@ module Helpmeout
       RestClient.post 'http://blooming-frost-23.heroku.com/fixes', generate_fix_xml(failed_test), :content_type => :xml unless failed_test.failed_test_files.empty?
     end
 
-    def query_fix(backtrace, exception_classname)
-      response = RestClient.get('http://blooming-frost-23.heroku.com/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname, :code_line => code_line_from_backtrace(backtrace)})
+    def query_fix(backtrace, exception_classname, exception_message)
+      response = RestClient.get('http://blooming-frost-23.heroku.com/fixes', :params => {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname, :code_line => code_line_from_backtrace(backtrace), :exception_message => exception_message})
       Hash.from_xml response
     end
 

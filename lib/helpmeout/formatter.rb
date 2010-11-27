@@ -3,7 +3,7 @@ require 'dm-migrations'
 require 'spec/runner/formatter/base_formatter'
 require 'helpmeout/failed_test'
 require 'helpmeout/failed_test_file'
-require 'differ'
+require 'helpmeout/html_diff'
 require 'erb'
 require 'launchy'
 require 'git'
@@ -43,7 +43,7 @@ require 'git'
 
         @description = example.description
         @message = exception.message
-        @fixes = service.query_fix(exception.backtrace, exception.class.name)
+        @fixes = service.query_fix(exception.backtrace, exception.class.name, @message)
 
         template = ERB.new(File.new(PATH_TO_EXAMPLE_ERB).read)
         @body << template.result(binding)
