@@ -27,6 +27,9 @@ require 'git'
         DBHelper.setup
         repository = File.join(Config.project_root, '.git_helpmeout')
         @git = Git.init(Config.project_root, {:repository => repository, :index => File.join(repository,'index')})
+        File.open(File.join(repository, 'info', 'exclude'), 'a') do |f|
+          f.puts '.git_helpmeout/'
+        end
       end
       
       def example_failed(example, counter, failure)
