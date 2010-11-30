@@ -17,7 +17,8 @@
           <%= failure_count %> failures
         </div>
 
-        <div class="accordion" id="tests">
+        <div class="accordion" id="tests">
+
           <%= @body %>
         </div>
 
@@ -252,27 +253,30 @@
   </style>
 
   <script type='text/javascript'>
-    jQuery().ready(function()
-        {
-        /*jQuery('#tests').accordion(
-          {
-autoheight: false
-});
-jQuery('#tests').accordion(
+jQuery().ready(function()
 {
-header: 'div.errorMeta',
-active: false,
-alwaysOpen: true,
-animated: false,
-autoheight: false
-});*/
-
-        $('div.accordionClick').click(function() {
-          /* $('div.accordionContent').slideUp('normal');	*/
-          $(this).next().slideToggle('normal');
-          });
-
-        $("div.accordionContent").hide();
-    });
+	$("div.accordionContent").hide();
+	$("div.accordionContent:first").show();
+	console.log($("div.accordionContent:first"));
+	/*jQuery('#tests').accordion(
+	{
+		autoheight: false
+	});
+	jQuery('#tests').accordion(
+	{
+			header: 'div.errorMeta',
+			active: false,
+			alwaysOpen: true,
+			animated: false,
+			autoheight: false
+	});*/
+	
+	$('div.accordionClick').click(function() {
+		$('div.accordionContent').slideUp('normal');	
+		$(this).next().slideDown('normal');
+	});
+ 	
+	
+});
   </script>
 </html>
