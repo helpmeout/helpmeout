@@ -11,7 +11,7 @@ module Helpmeout
     end
 
     def query_fix(backtrace, exception_classname, exception_message)
-      response = RestClient.post('http://blooming-frost-23.heroku.com/fixes/find', :params => {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname, :code_line => code_line_from_backtrace(backtrace), :exception_message => exception_message})
+      response = RestClient.post('http://blooming-frost-23.heroku.com/fixes/find', {:backtrace => clean_backtrace(backtrace).join("\n"), :exception_classname => exception_classname, :code_line => code_line_from_backtrace(backtrace), :exception_message => exception_message})
       Hash.from_xml response
     end
 
