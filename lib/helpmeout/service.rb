@@ -69,8 +69,12 @@ module Helpmeout
       end
       if first_project_line
         (filename, line) = first_project_line.split(':')
-        file = File.open(filename)
-        file.readlines[line.to_i - 1]
+        begin
+          file = File.open(filename)
+          file.readlines[line.to_i - 1]
+        rescue
+          nil
+        end
       else
         nil
       end

@@ -27,8 +27,11 @@ require 'git'
         DBHelper.setup
         repository = File.join(Config.project_root, '.git_helpmeout')
         @git = Git.init(Config.project_root, {:repository => repository, :index => File.join(repository,'index')})
-        File.open(File.join(repository, 'info', 'exclude'), 'a') do |f|
-          f.puts '.git_helpmeout/'
+        exclude_file_path = File.join(repository, 'info', 'exclude')
+        unless File.read(exclude_file_path).include?('.git_helpmeout/')
+          File.open(exclude_file_path, 'a') do |f|
+            f.puts '.git_helpmeout/'
+          end
         end
       end
       
@@ -55,7 +58,7 @@ require 'git'
     def example_passed(example)
       if failed_test = matching_failed_test(example)
         @git.status.changed.each do |file|
-          if /\.rb$/.match(file[0])
+          if /\.e?rb$/.match(file[0])
             create_failed_test_file(file[0],failed_test.id)
           end
         end

@@ -29,8 +29,8 @@
                   <%= fix_file['path'] %>
                 </div>
                 <div class="errorInfo">
-                  <% hd = HTMLDiff.new(fix_file['content_after'].split("\n"), fix_file['content_before'].split("\n")) %>
-                <pre> <%= hd.output %> </pre>
+                  <% hd = HTMLDiff.new((fix_file['content_after'] || '').split("\n"), (fix_file['content_before'] || '').split("\n")) %>
+                <pre> <%=h hd.output %> </pre>
                 </div>				
               </div>
             </td>
