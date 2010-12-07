@@ -14,11 +14,11 @@
       </td>
     </tr>
     <% if @fixes['fixes'] %>
-      <tr><td><h2>Fixes</h2></td></tr>
+      <tr><td><h2>Suggestions:</h2></td></tr>
       <% @fixes['fixes'].each_with_index do |fix, index| %>
         <tr class="errorFix">
           <td>
-            <div>Fix <%= index + 1 %></div>
+            <div>Suggestions <%= index + 1 %></div>
           </td>
         </tr>
         <% fix['fix_files'].each do |fix_file| %>
